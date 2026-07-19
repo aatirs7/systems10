@@ -46,3 +46,27 @@ export const STATUS_LABELS: Record<BrandStatus, string> = {
   assigned: "Assigned",
   archived: "Archived",
 };
+
+// Funnel-aware accent colour per status (hex). Cool early, warm/green as a brand
+// progresses toward closed. Used for dots, pills, and the pipeline stepper.
+export const STATUS_HUE: Record<BrandStatus, string> = {
+  sourced: "#8B93A1",
+  enriching: "#F5B94A",
+  ready_to_contact: "#49B7F7",
+  sequencing: "#A78BFA",
+  interested: "#C9F24A",
+  closed: "#34D399",
+  assigned: "#E879F9",
+  archived: "#5B6169",
+};
+
+// The linear funnel order (excludes archived) for the detail stepper.
+export const FUNNEL_ORDER: BrandStatus[] = [
+  "sourced",
+  "enriching",
+  "ready_to_contact",
+  "sequencing",
+  "interested",
+  "closed",
+  "assigned",
+];

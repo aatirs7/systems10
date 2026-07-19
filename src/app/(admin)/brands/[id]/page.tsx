@@ -5,6 +5,8 @@ import { db } from "@/db";
 import { brands, contacts, outreachLog } from "@/db/schema";
 import { StatusBadge } from "@/components/status-badge";
 import { StatusControl } from "@/components/status-control";
+import { FunnelStepper } from "@/components/funnel-stepper";
+import { IconArrowLeft, IconExternal } from "@/components/icons";
 import { ALLOWED_TRANSITIONS } from "@/lib/status";
 import { formatGmv, formatDate } from "@/lib/format";
 
@@ -28,64 +30,88 @@ export default async function BrandDetailPage({ params }: { params: Promise<{ id
     .where(eq(outreachLog.brandId, brandId))
     .orderBy(desc(outreachLog.id));
 
+  const contact = contactRows[0];
   const nextOptions = ALLOWED_TRANSITIONS[brand.status];
 
   return (
     <div className="space-y-8">
-      <div>
-        <Link href="/pipeline" className="text-sm text-neutral-500 hover:text-neutral-900">
-          &larr; Back to pipeline
+      <div className="animate-fade-up">
+        <Link href="/pipeline" className="inline-flex items-center gap-1.5 text-sm text-muted transition hover:text-fog">
+          <IconArrowLeft width={15} height={15} />
+          Pipeline
         </Link>
-        <div className="mt-2 flex items-center gap-3">
-          <h1 className="text-2xl font-semibold">{brand.brandName}</h1>
-          <StatusBadge status={brand.status} />
+        <div className="mt-3 flex flex-wrap items-center gap-3">
+          <h1 className="font-display text-3xl font-bold tracking-tight text-fog">{brand.brandName}</h1>
+          <StatusBadge status={brand.status} size="md" />
         </div>
-        <p className="text-sm text-neutral-500">{brand.tiktokHandle}</p>
+        <p className="mt-1 font-mono text-sm text-muted">@{brand.tiktokHandle}</p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <section className="rounded-lg border border-neutral-200 bg-white p-5">
-          <h2 className="mb-3 text-sm font-semibold text-neutral-500">Brand</h2>
-          <dl className="space-y-2 text-sm">
-            <Row label="Monthly GMV" value={formatGmv(brand.monthlyGmv)} />
-            <Row label="Category" value={brand.category ?? "-"} />
-            <Row label="Domain" value={brand.domain ?? "-"} />
-            <Row label="Contact type" value={brand.contactType ?? "-"} />
+      {/* Funnel rail */}
+      <section className="panel p-6">
+        <p className="kicker mb-5">Funnel position</p>
+        <FunnelStepper status={brand.status} />
+      </section>
+
+      <div className="grid gap-5 md:grid-cols-2">
+        <section className="panel p-6">
+          <p className="kicker mb-4">Brand</p>
+          <dl className="space-y-3 text-sm">
+            <Row label="Monthly GMV" value={<span className="font-mono text-fog">{formatGmv(brand.monthlyGmv)}</span>} />
+            <Row label="Category" value={brand.category ?? "·"} />
+            <Row label="Domain" value={brand.domain ?? "·"} />
+            <Row label="Contact type" value={brand.contactType ? brand.contactType.toUpperCase() : "·"} mono />
             <Row label="Date sourced" value={formatDate(brand.dateSourced)} />
-            <Row label="Assigned student" value={brand.assignedStudentId ?? "-"} />
+            <Row label="Assigned student" value={brand.assignedStudentId ?? "·"} mono />
           </dl>
         </section>
 
-        <section className="rounded-lg border border-neutral-200 bg-white p-5">
-          <h2 className="mb-3 text-sm font-semibold text-neutral-500">Contact</h2>
-          {contactRows.length === 0 ? (
-            <p className="text-sm text-neutral-400">No contact enriched yet.</p>
+        <section className="panel p-6">
+          <p className="kicker mb-4">Contact</p>
+          {!contact ? (
+            <div className="flex h-[140px] flex-col items-center justify-center rounded-lg border border-dashed border-line-2 text-center">
+              <p className="text-sm text-muted">No contact enriched yet</p>
+              <p className="mt-1 text-xs text-faint">Clay pushes this via the enrichment webhook.</p>
+            </div>
           ) : (
-            <dl className="space-y-2 text-sm">
-              <Row label="Name" value={contactRows[0].contactName ?? "-"} />
-              <Row label="Title" value={contactRows[0].title ?? "-"} />
+            <dl className="space-y-3 text-sm">
+              <Row label="Name" value={contact.contactName ?? "·"} />
+              <Row label="Title" value={contact.title ?? "·"} />
               <Row
                 label="Email"
                 value={
-                  contactRows[0].email
-                    ? `${contactRows[0].email}${contactRows[0].emailVerified ? " (verified)" : " (unverified)"}`
-                    : "-"
+                  contact.email ? (
+                    <span className="flex items-center gap-2">
+                      <span className="font-mono text-fog">{contact.email}</span>
+                      <span
+                        className={`rounded px-1.5 py-0.5 font-mono text-[10px] uppercase ${
+                          contact.emailVerified
+                            ? "bg-emerald-400/15 text-emerald-300"
+                            : "bg-amber-400/15 text-amber-300"
+                        }`}
+                      >
+                        {contact.emailVerified ? "verified" : "unverified"}
+                      </span>
+                    </span>
+                  ) : (
+                    "·"
+                  )
                 }
               />
               <Row
                 label="LinkedIn"
                 value={
-                  contactRows[0].linkedinUrl ? (
+                  contact.linkedinUrl ? (
                     <a
-                      href={contactRows[0].linkedinUrl}
+                      href={contact.linkedinUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-sky-700 underline"
+                      className="inline-flex items-center gap-1.5 text-acid hover:underline"
                     >
-                      Profile
+                      Profile <IconExternal width={13} height={13} />
                     </a>
                   ) : (
-                    "-"
+                    "·"
                   )
                 }
               />
@@ -94,51 +120,63 @@ export default async function BrandDetailPage({ params }: { params: Promise<{ id
         </section>
       </div>
 
-      <section className="rounded-lg border border-neutral-200 bg-white p-5">
-        <h2 className="mb-3 text-sm font-semibold text-neutral-500">Status</h2>
-        <StatusControl brandId={brand.id} current={brand.status} nextOptions={nextOptions} />
+      {/* Status actions */}
+      <section className="panel p-6">
+        <p className="kicker mb-4">Advance status</p>
+        <StatusControl brandId={brand.id} nextOptions={nextOptions} />
       </section>
 
-      <section className="rounded-lg border border-neutral-200 bg-white p-5">
-        <h2 className="mb-3 text-sm font-semibold text-neutral-500">Outreach log</h2>
+      {/* Outreach timeline */}
+      <section className="panel p-6">
+        <p className="kicker mb-4">Outreach log</p>
         {log.length === 0 ? (
-          <p className="text-sm text-neutral-400">No outreach logged yet.</p>
+          <p className="text-sm text-muted">No outreach logged yet.</p>
         ) : (
-          <table className="w-full text-sm">
-            <thead className="text-left text-neutral-500">
-              <tr>
-                <th className="py-1 font-medium">Channel</th>
-                <th className="py-1 font-medium">Step</th>
-                <th className="py-1 font-medium">Sent</th>
-                <th className="py-1 font-medium">Opened</th>
-                <th className="py-1 font-medium">Replied</th>
-                <th className="py-1 font-medium">Sentiment</th>
-              </tr>
-            </thead>
-            <tbody>
-              {log.map((e) => (
-                <tr key={e.id} className="border-t border-neutral-100">
-                  <td className="py-1 capitalize">{e.channel}</td>
-                  <td className="py-1">{e.sequenceStep ?? "-"}</td>
-                  <td className="py-1">{formatDate(e.sentAt)}</td>
-                  <td className="py-1">{e.opened ? "Yes" : "-"}</td>
-                  <td className="py-1">{e.replied ? "Yes" : "-"}</td>
-                  <td className="py-1 capitalize">{e.replySentiment ?? "-"}</td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-line text-left">
+                  {["Channel", "Step", "Sent", "Opened", "Replied", "Sentiment"].map((h) => (
+                    <th key={h} className="pb-2 pr-4 font-mono text-[10px] uppercase tracking-wider text-faint">
+                      {h}
+                    </th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {log.map((e) => (
+                  <tr key={e.id} className="border-b border-line/50 last:border-0">
+                    <td className="py-2.5 pr-4 capitalize text-fog">{e.channel}</td>
+                    <td className="py-2.5 pr-4 font-mono text-muted">{e.sequenceStep ?? "·"}</td>
+                    <td className="py-2.5 pr-4 text-muted">{formatDate(e.sentAt)}</td>
+                    <td className="py-2.5 pr-4">{e.opened ? <Dot ok /> : <span className="text-faint">·</span>}</td>
+                    <td className="py-2.5 pr-4">{e.replied ? <Dot ok /> : <span className="text-faint">·</span>}</td>
+                    <td className="py-2.5 pr-4 capitalize text-muted">{e.replySentiment ?? "·"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </section>
     </div>
   );
 }
 
-function Row({ label, value }: { label: string; value: React.ReactNode }) {
+function Row({ label, value, mono }: { label: string; value: React.ReactNode; mono?: boolean }) {
   return (
-    <div className="flex justify-between gap-4">
-      <dt className="text-neutral-500">{label}</dt>
-      <dd className="text-right font-medium text-neutral-900">{value}</dd>
+    <div className="flex items-start justify-between gap-4">
+      <dt className="text-muted">{label}</dt>
+      <dd className={`text-right text-fog ${mono ? "font-mono text-xs" : ""}`}>{value}</dd>
     </div>
+  );
+}
+
+function Dot({ ok }: { ok?: boolean }) {
+  return (
+    <span
+      className="inline-block h-2 w-2 rounded-full"
+      style={{ backgroundColor: ok ? "#34D399" : "rgba(255,255,255,0.2)" }}
+    />
   );
 }

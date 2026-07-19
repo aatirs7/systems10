@@ -1,22 +1,20 @@
 import type { BrandStatus } from "@/db/schema";
-import { STATUS_LABELS } from "@/lib/status";
+import { STATUS_LABELS, STATUS_HUE } from "@/lib/status";
 
-const STYLES: Record<BrandStatus, string> = {
-  sourced: "bg-neutral-100 text-neutral-700",
-  enriching: "bg-amber-100 text-amber-800",
-  ready_to_contact: "bg-sky-100 text-sky-800",
-  sequencing: "bg-indigo-100 text-indigo-800",
-  interested: "bg-emerald-100 text-emerald-800",
-  closed: "bg-green-600 text-white",
-  assigned: "bg-purple-100 text-purple-800",
-  archived: "bg-neutral-200 text-neutral-500",
-};
-
-export function StatusBadge({ status }: { status: BrandStatus }) {
+export function StatusBadge({ status, size = "sm" }: { status: BrandStatus; size?: "sm" | "md" }) {
+  const hue = STATUS_HUE[status];
   return (
     <span
-      className={`inline-block whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium ${STYLES[status]}`}
+      className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border font-medium ${
+        size === "md" ? "px-2.5 py-1 text-[12px]" : "px-2 py-0.5 text-[11px]"
+      }`}
+      style={{
+        color: hue,
+        borderColor: `${hue}33`,
+        backgroundColor: `${hue}14`,
+      }}
     >
+      <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: hue }} />
       {STATUS_LABELS[status]}
     </span>
   );

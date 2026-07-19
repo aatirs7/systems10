@@ -2,6 +2,7 @@
 
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { IconMark, IconArrowRight } from "@/components/icons";
 
 function LoginForm() {
   const router = useRouter();
@@ -22,8 +23,7 @@ function LoginForm() {
     });
     setLoading(false);
     if (res.ok) {
-      const from = params.get("from") || "/pipeline";
-      router.push(from);
+      router.push(params.get("from") || "/pipeline");
       router.refresh();
     } else {
       const data = await res.json().catch(() => ({}));
@@ -32,44 +32,66 @@ function LoginForm() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center p-6">
-      <form
-        onSubmit={onSubmit}
-        className="w-full max-w-sm space-y-4 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm"
-      >
-        <div>
-          <h1 className="text-lg font-semibold">Systems 10 Outbound</h1>
-          <p className="text-sm text-neutral-500">Sign in to the acquisition pipeline.</p>
+    <main className="relative flex min-h-screen items-center justify-center p-6">
+      <div className="w-full max-w-[400px] animate-fade-up">
+        <div className="mb-8 flex items-center gap-3">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-acid text-ink shadow-glow">
+            <IconMark width={20} height={20} />
+          </span>
+          <div className="leading-tight">
+            <div className="font-display text-lg font-bold tracking-tight text-fog">Systems 10</div>
+            <div className="kicker">Outbound Console</div>
+          </div>
         </div>
-        <label className="block text-sm">
-          <span className="mb-1 block font-medium">Email</span>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900"
-          />
-        </label>
-        <label className="block text-sm">
-          <span className="mb-1 block font-medium">Password</span>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900"
-          />
-        </label>
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full rounded-md bg-neutral-900 px-3 py-2 text-sm font-medium text-white hover:bg-neutral-800 disabled:opacity-60"
-        >
-          {loading ? "Signing in..." : "Sign in"}
-        </button>
-      </form>
+
+        <form onSubmit={onSubmit} className="panel space-y-5 p-7">
+          <div>
+            <h1 className="font-display text-xl font-semibold tracking-tight text-fog">Sign in</h1>
+            <p className="mt-1 text-sm text-muted">Access the acquisition pipeline.</p>
+          </div>
+
+          <label className="block">
+            <span className="kicker mb-1.5 block">Email</span>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="username"
+              placeholder="you@systems10.com"
+              className="field"
+            />
+          </label>
+
+          <label className="block">
+            <span className="kicker mb-1.5 block">Password</span>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              autoComplete="current-password"
+              placeholder="••••••••"
+              className="field"
+            />
+          </label>
+
+          {error && (
+            <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
+              {error}
+            </p>
+          )}
+
+          <button type="submit" disabled={loading} className="btn-primary w-full">
+            {loading ? "Signing in…" : "Sign in"}
+            {!loading && <IconArrowRight width={16} height={16} />}
+          </button>
+        </form>
+
+        <p className="mt-5 text-center font-mono text-[11px] uppercase tracking-[0.18em] text-faint">
+          Sourced → Enriched → Sequenced → Closed
+        </p>
+      </div>
     </main>
   );
 }

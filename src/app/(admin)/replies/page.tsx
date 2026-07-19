@@ -3,6 +3,7 @@ import { desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { brands, contacts } from "@/db/schema";
 import { formatGmv } from "@/lib/format";
+import { IconArrowRight } from "@/components/icons";
 
 // Reply review (spec §3.7): brands that replied positive and are waiting on the closer.
 export default async function RepliesPage() {
@@ -14,56 +15,54 @@ export default async function RepliesPage() {
     .orderBy(desc(brands.monthlyGmv));
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Interested replies</h1>
-        <span className="text-sm text-neutral-500">{rows.length} awaiting a call</span>
-      </div>
-      <p className="text-sm text-neutral-600">
-        Brands that replied positive and are ready for the qualification call. Open a brand to book
-        the call and move it to <strong>closed</strong> once the deal is done.
-      </p>
+    <div className="space-y-8">
+      <header className="animate-fade-up">
+        <p className="kicker">Awaiting the qualification call</p>
+        <div className="mt-1 flex items-end justify-between">
+          <h1 className="font-display text-3xl font-bold tracking-tight text-fog">Interested replies</h1>
+          <span className="font-mono text-sm text-muted">
+            <span className="text-acid">{rows.length}</span> to action
+          </span>
+        </div>
+        <p className="mt-3 max-w-2xl text-sm text-muted">
+          Brands that replied positive. Book the Calendly call, then open the brand and move it to{" "}
+          <span className="text-fog">Closed</span> once the deal is done.
+        </p>
+      </header>
 
-      <div className="overflow-x-auto rounded-lg border border-neutral-200 bg-white">
-        <table className="w-full text-sm">
-          <thead className="border-b border-neutral-200 bg-neutral-50 text-left text-neutral-500">
-            <tr>
-              <th className="px-4 py-2 font-medium">Brand</th>
-              <th className="px-4 py-2 font-medium">GMV</th>
-              <th className="px-4 py-2 font-medium">Contact</th>
-              <th className="px-4 py-2 font-medium">Email</th>
-              <th className="px-4 py-2 font-medium"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.length === 0 && (
-              <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-neutral-400">
-                  No interested replies yet.
-                </td>
-              </tr>
-            )}
-            {rows.map(({ brand, contact }) => (
-              <tr key={brand.id} className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50">
-                <td className="px-4 py-2">
-                  <Link href={`/brands/${brand.id}`} className="font-medium hover:underline">
-                    {brand.brandName}
-                  </Link>
-                  <div className="text-xs text-neutral-500">{brand.tiktokHandle}</div>
-                </td>
-                <td className="px-4 py-2 tabular-nums">{formatGmv(brand.monthlyGmv)}</td>
-                <td className="px-4 py-2 text-neutral-600">{contact?.contactName ?? "-"}</td>
-                <td className="px-4 py-2 text-neutral-600">{contact?.email ?? "-"}</td>
-                <td className="px-4 py-2 text-right">
-                  <Link href={`/brands/${brand.id}`} className="text-sm font-medium text-sky-700 hover:underline">
-                    Open
-                  </Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {rows.length === 0 ? (
+        <div className="panel flex flex-col items-center justify-center py-20 text-center">
+          <p className="text-sm text-muted">No interested replies yet.</p>
+          <p className="mt-1 text-xs text-faint">Positive replies land here automatically via the reply webhook.</p>
+        </div>
+      ) : (
+        <div className="grid gap-3 sm:grid-cols-2">
+          {rows.map(({ brand, contact }) => (
+            <Link
+              key={brand.id}
+              href={`/brands/${brand.id}`}
+              className="group panel p-5 transition hover:border-line-2 hover:bg-white/[0.03]"
+            >
+              <div className="flex items-start justify-between">
+                <div className="min-w-0">
+                  <h3 className="truncate font-display text-lg font-semibold text-fog">{brand.brandName}</h3>
+                  <p className="font-mono text-xs text-muted">@{brand.tiktokHandle}</p>
+                </div>
+                <span className="font-mono text-sm tabular-nums text-acid">{formatGmv(brand.monthlyGmv)}</span>
+              </div>
+              <div className="mt-4 flex items-center justify-between border-t border-line pt-4">
+                <div className="min-w-0 text-sm">
+                  <span className="text-fog">{contact?.contactName ?? "No contact"}</span>
+                  {contact?.email && <span className="ml-2 truncate font-mono text-xs text-muted">{contact.email}</span>}
+                </div>
+                <span className="flex items-center gap-1 text-xs font-medium text-acid opacity-0 transition group-hover:opacity-100">
+                  Open <IconArrowRight width={13} height={13} />
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
