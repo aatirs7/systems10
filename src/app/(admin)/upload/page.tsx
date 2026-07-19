@@ -32,7 +32,7 @@ export default function UploadPage() {
       </header>
 
       <form onSubmit={onSubmit} className="panel space-y-5 p-6">
-        <label className="flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-line-2 bg-black/20 px-6 py-12 text-center transition hover:border-acid/40 hover:bg-white/[0.02]">
+        <label className="flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-line-2 bg-canvas/50 px-6 py-12 text-center transition hover:border-acid/40 hover:bg-fog/[0.02]">
           <span className="flex h-12 w-12 items-center justify-center rounded-full bg-acid/10 text-acid">
             <IconUpload width={22} height={22} />
           </span>
@@ -93,7 +93,7 @@ export default function UploadPage() {
 
 function Stat({ label, value, accent }: { label: string; value: number; accent?: boolean }) {
   return (
-    <div className="rounded-lg border border-line bg-black/20 p-3">
+    <div className="rounded-lg border border-line bg-canvas/50 p-3">
       <div className={`font-display text-2xl font-semibold ${accent ? "text-acid" : "text-fog"}`}>{value}</div>
       <div className="mt-0.5 font-mono text-[10px] uppercase tracking-wider text-faint">{label}</div>
     </div>

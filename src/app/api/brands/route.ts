@@ -8,7 +8,7 @@ import { BRAND_STATUSES } from "@/lib/status";
 // GET /api/brands?status=ready_to_contact[&claim=true][&limit=100]
 // Machine endpoint: Make.com pulls contactable brands (with their contact) to push into
 // Instantly / the LinkedIn tool. With claim=true, ready_to_contact brands are advanced to
-// "sequencing" so the same brand isn't pulled twice (spec §3.5–3.6).
+// "sequencing" so the same brand isn't pulled twice (spec §3.5-3.6).
 export async function GET(req: Request) {
   const unauthorized = requireApiKey(req);
   if (unauthorized) return unauthorized;

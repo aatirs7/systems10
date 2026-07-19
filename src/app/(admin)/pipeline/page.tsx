@@ -92,8 +92,8 @@ export default async function PipelinePage({ searchParams }: { searchParams: Sea
               style={{ animationDelay: `${i * 45}ms` }}
               className={`animate-fade-up rounded-xl border p-3 transition ${
                 active
-                  ? "border-transparent bg-white/[0.06]"
-                  : "border-line bg-panel/50 hover:border-line-2 hover:bg-white/[0.03]"
+                  ? "border-transparent bg-fog/[0.06]"
+                  : "border-line bg-panel/50 hover:border-line-2 hover:bg-fog/[0.03]"
               }`}
             >
               <div className="flex items-center gap-1.5">
@@ -189,7 +189,7 @@ export default async function PipelinePage({ searchParams }: { searchParams: Sea
               {rows.map((b) => (
                 <tr
                   key={b.id}
-                  className="group border-b border-line/60 transition last:border-0 hover:bg-white/[0.025]"
+                  className="group border-b border-line/60 transition last:border-0 hover:bg-fog/[0.025]"
                 >
                   <td className="px-4 py-3">
                     <Link

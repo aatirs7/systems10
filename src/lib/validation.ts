@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-// --- Webhook payloads (spec §3.3, §3.5–3.7) ---
+// --- Webhook payloads (spec §3.3, §3.5-3.7) ---
 // Brands are addressed by tiktok_handle (the stable dedup key) or numeric brand id.
 
 const brandRef = z

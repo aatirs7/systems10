@@ -2,54 +2,91 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+/* ============================================================
+   Warm monochrome theme. Dark by default; [data-theme="light"]
+   flips the tokens. Color is near-neutral ink/paper with a single
+   faint amber accent used sparingly.
+   ============================================================ */
+
+:root,
+:root[data-theme="dark"] {
   color-scheme: dark;
+  --canvas: 11 10 9;
+  --panel: 20 19 17;
+  --panel-2: 27 25 22;
+  --fg: 236 233 227;
+  --muted: 155 149 140;
+  --faint: 108 102 94;
+  --line: rgba(240, 235, 227, 0.09);
+  --line-2: rgba(240, 235, 227, 0.15);
+  --accent: 226 165 82;
+  --accent-dim: 201 143 66;
+  --invert: 236 231 222;
+  --invert-fg: 18 16 14;
+  --glow: rgba(226, 165, 82, 0.05);
+  --grid: rgba(240, 235, 227, 0.02);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --canvas: 247 245 240;
+  --panel: 255 255 254;
+  --panel-2: 243 240 233;
+  --fg: 28 25 21;
+  --muted: 108 101 92;
+  --faint: 150 143 133;
+  --line: rgba(28, 25, 21, 0.1);
+  --line-2: rgba(28, 25, 21, 0.16);
+  --accent: 172 112 34;
+  --accent-dim: 146 94 26;
+  --invert: 28 25 21;
+  --invert-fg: 247 245 240;
+  --glow: rgba(172, 112, 34, 0.07);
+  --grid: rgba(28, 25, 21, 0.028);
 }
 
 @layer base {
   html {
-    @apply bg-ink text-fog;
+    background-color: rgb(var(--canvas));
+    color: rgb(var(--fg));
   }
 
   body {
-    @apply bg-ink text-fog antialiased;
+    color: rgb(var(--fg));
     font-family: var(--font-geist-sans), system-ui, sans-serif;
-    /* Atmospheric console backdrop: layered radial glows + a fine grid. */
-    background-color: #08090b;
+    -webkit-font-smoothing: antialiased;
+    background-color: rgb(var(--canvas));
     background-image:
-      radial-gradient(60rem 40rem at 82% -8%, rgba(201, 242, 74, 0.06), transparent 60%),
-      radial-gradient(50rem 40rem at 0% 100%, rgba(56, 189, 248, 0.05), transparent 55%),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-      linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
-    background-size: 100% 100%, 100% 100%, 44px 44px, 44px 44px;
+      radial-gradient(58rem 40rem at 84% -10%, var(--glow), transparent 60%),
+      radial-gradient(46rem 38rem at -6% 108%, var(--glow), transparent 58%),
+      linear-gradient(to bottom, var(--grid) 1px, transparent 1px),
+      linear-gradient(to right, var(--grid) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 46px 46px, 46px 46px;
     background-attachment: fixed;
     min-height: 100vh;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
   }
 
   ::selection {
-    background: rgba(201, 242, 74, 0.25);
-    color: #fff;
+    background: rgb(var(--accent) / 0.28);
+    color: rgb(var(--fg));
   }
 
-  /* Scrollbars */
   * {
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
+    scrollbar-color: rgb(var(--fg) / 0.18) transparent;
   }
   *::-webkit-scrollbar {
     width: 10px;
     height: 10px;
   }
   *::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.12);
+    background: rgb(var(--fg) / 0.16);
     border-radius: 999px;
     border: 2px solid transparent;
     background-clip: padding-box;
-  }
-
-  input,
-  select {
-    color-scheme: dark;
   }
 }
 
@@ -59,21 +96,22 @@
   }
 
   .field {
-    @apply w-full rounded-lg border border-line-2 bg-black/30 px-3 py-2 text-sm text-fog
+    @apply w-full rounded-lg border border-line-2 bg-canvas/40 px-3 py-2 text-sm text-fog
       outline-none transition placeholder:text-faint
       focus:border-acid/60 focus:ring-2 focus:ring-acid/15;
   }
 
+  /* Primary = high-contrast monochrome (inverted surface). */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-acid px-4 py-2
-      text-sm font-semibold text-ink transition hover:bg-acid-dim
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-invert px-4 py-2
+      text-sm font-semibold text-invert-fg transition hover:opacity-90
       disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-ghost {
     @apply inline-flex items-center justify-center gap-2 rounded-lg border border-line-2
-      bg-white/[0.02] px-3 py-2 text-sm font-medium text-muted transition
-      hover:border-line-2 hover:bg-white/[0.05] hover:text-fog disabled:opacity-50;
+      bg-fog/[0.02] px-3 py-2 text-sm font-medium text-muted transition
+      hover:bg-fog/[0.05] hover:text-fog disabled:opacity-50;
   }
 
   .kicker {

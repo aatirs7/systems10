@@ -2,7 +2,8 @@
 
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { IconMark, IconArrowRight } from "@/components/icons";
+import { BrandGlyph, IconArrowRight } from "@/components/icons";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 function LoginForm() {
   const router = useRouter();
@@ -33,10 +34,13 @@ function LoginForm() {
 
   return (
     <main className="relative flex min-h-screen items-center justify-center p-6">
+      <div className="absolute right-5 top-5">
+        <ThemeToggle variant="icon" />
+      </div>
       <div className="w-full max-w-[400px] animate-fade-up">
-        <div className="mb-8 flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-acid text-ink shadow-glow">
-            <IconMark width={20} height={20} />
+        <div className="mb-8 flex items-center justify-center gap-3">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-line-2 bg-panel-2 text-acid">
+            <BrandGlyph width={20} height={20} />
           </span>
           <div className="leading-tight">
             <div className="font-display text-lg font-bold tracking-tight text-fog">Systems 10</div>

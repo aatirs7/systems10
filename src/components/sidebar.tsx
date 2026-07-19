@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { IconMark, IconPipeline, IconReplies, IconUpload } from "@/components/icons";
+import { BrandGlyph, IconPipeline, IconReplies, IconUpload } from "@/components/icons";
 import { LogoutButton } from "@/components/logout-button";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const NAV = [
   { href: "/pipeline", label: "Pipeline", Icon: IconPipeline },
@@ -23,8 +24,8 @@ export function Sidebar({
   return (
     <aside className="sticky top-0 flex h-screen w-[248px] shrink-0 flex-col border-r border-line bg-panel/40 px-4 py-5 backdrop-blur-sm">
       <div className="flex items-center gap-2.5 px-2">
-        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-acid text-ink">
-          <IconMark width={18} height={18} />
+        <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-line-2 bg-panel-2 text-acid">
+          <BrandGlyph width={18} height={18} />
         </span>
         <div className="leading-tight">
           <div className="font-display text-[15px] font-bold tracking-tight text-fog">Systems 10</div>
@@ -41,8 +42,8 @@ export function Sidebar({
               href={href}
               className={`group flex items-center justify-between rounded-lg px-3 py-2 text-sm transition ${
                 active
-                  ? "bg-white/[0.06] font-medium text-fog"
-                  : "text-muted hover:bg-white/[0.03] hover:text-fog"
+                  ? "bg-fog/[0.06] font-medium text-fog"
+                  : "text-muted hover:bg-fog/[0.03] hover:text-fog"
               }`}
             >
               <span className="flex items-center gap-3">
@@ -65,13 +66,14 @@ export function Sidebar({
 
       <div className="mt-auto space-y-3 border-t border-line pt-4">
         <div className="flex items-center gap-2.5 px-1">
-          <span className="flex h-8 w-8 items-center justify-center rounded-full border border-line-2 bg-black/40 font-mono text-xs font-semibold text-acid">
+          <span className="flex h-8 w-8 items-center justify-center rounded-full border border-line-2 bg-panel-2 font-mono text-xs font-semibold text-acid">
             {email.charAt(0).toUpperCase()}
           </span>
           <span className="min-w-0 flex-1 truncate text-xs text-muted" title={email}>
             {email}
           </span>
         </div>
+        <ThemeToggle />
         <LogoutButton />
       </div>
     </aside>

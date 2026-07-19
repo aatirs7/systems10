@@ -41,7 +41,7 @@ export default async function RepliesPage() {
             <Link
               key={brand.id}
               href={`/brands/${brand.id}`}
-              className="group panel p-5 transition hover:border-line-2 hover:bg-white/[0.03]"
+              className="group panel p-5 transition hover:border-line-2 hover:bg-fog/[0.03]"
             >
               <div className="flex items-start justify-between">
                 <div className="min-w-0">
