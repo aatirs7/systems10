@@ -15,7 +15,7 @@ export default async function RepliesPage() {
     .orderBy(desc(brands.monthlyGmv));
 
   return (
-    <div className="space-y-8">
+    <div className="mx-auto max-w-4xl space-y-8">
       <header className="animate-fade-up">
         <p className="kicker">Awaiting the qualification call</p>
         <div className="mt-1 flex items-end justify-between">

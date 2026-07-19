@@ -21,7 +21,7 @@ export default function UploadPage() {
   }
 
   return (
-    <div className="max-w-2xl space-y-8">
+    <div className="mx-auto max-w-2xl space-y-8">
       <header className="animate-fade-up">
         <p className="kicker">Sourcing</p>
         <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-fog">Import Kalodata CSV</h1>
